@@ -12,10 +12,17 @@ export default {
   /**
    * ----{条件统计}----
    * @param {Object} condition condition
+   * @param {String} pageSize pageSize
+   * @param {String} current current
    * @returns {Promise} promise
    */
-  async findWorkTimesByCondition(condition) {
-    return await WorkTime.find(condition);
+  async findWorkTimesByCondition(condition, pageSize, current) {
+    const skip = (current-1) * pageSize;
+    return await WorkTime.find(condition)
+      .skip(Number(skip))
+      .sort({ status: 1, updatedAt: -1 })
+      .limit(Number(pageSize))
+      .exec();
   },
 
   /**

@@ -2,7 +2,7 @@ import { WorkTime } from '../proxy';
 export default {
 
   /**
-   * ----{根据条件查看任务数量}----
+   * ----{根据条件查看任务工时数量}----
    * @param {Object} condition condition
    * @returns {Promise} Promise
    */
@@ -11,16 +11,21 @@ export default {
   },
 
   /**
-   * ----{根据条件查看任务}----
+   * ----{根据条件查看任务工时列表}----
    * @param {Object} condition condition
+   * @param {String} pageSize pageSize
+   * @param {String} current current
    * @returns {Promise} Promise
    */
-  async findWorkTimesByCondition(condition){
-    return await WorkTime.findWorkTimesByCondition(condition);
+  async findWorkTimesByCondition(condition, pageSize, current){
+    const workTimes = await WorkTime.
+      findWorkTimesByCondition(condition, pageSize, current);
+    const total = await WorkTime.countWorkTimesByCondition(condition);
+    return await { workTimes, total }
   },
 
   /**
-   * ----{获取微信账号}----
+   * ----{获取任务工时}----
    * @param {ObjectId} id id
    * @returns {Promise} Promise
    */
@@ -29,7 +34,7 @@ export default {
   },
 
   /**
-   * ----{新增任务}----
+   * ----{新增任务工时}----
    * @param {Object} workTime workTime
    * @returns {Promise} Promise
    */
@@ -38,7 +43,7 @@ export default {
   },
 
   /**
-   * ----{更新任务}----
+   * ----{更新任务工时}----
    * @param {ObjectId} id id
    * @param {Object} update update
    * @returns {Promise} Promise
@@ -57,7 +62,7 @@ export default {
   },
 
   /**
-   * ----{更新任务}----
+   * ----{hide workTime}----
    * @param {ObjectId} id id
    * @param {Object} update update
    * @returns {Promise} Promise
@@ -68,7 +73,7 @@ export default {
   },
 
   /**
-   * ----{更新任务}----
+   * ----{unhide workTime}----
    * @param {ObjectId} id id
    * @param {Object} update update
    * @returns {Promise} Promise
@@ -78,26 +83,71 @@ export default {
     await WorkTime.updateWorkTime(id, update);
   },
 
+  /**
+   * ----{归档任务}----
+   * @param {ObjectId} id id
+   * @param {Object} update update
+   * @returns {Promise} Promise
+   */
+  async archiveWorkTimeById(id){
+    const update = { isArchived: true };
+    await WorkTime.updateWorkTime(id, update);
+  },
 
   /**
-   * ----{批量任务可见}----
+   * ----{解档任务}----
+   * @param {ObjectId} id id
+   * @param {Object} update update
+   * @returns {Promise} Promise
+   */
+  async unarchiveWorkTimeById(id){
+    const update = { isArchived: false };
+    await WorkTime.updateWorkTime(id, update);
+  },
+
+  /**
+   * ----{unhide worktimes bulk}----
    * @param {Object} condition condition
    * @param {Object} update update
    * @param {Object} options options
    * @returns {Promise} Promise
    */
-  async unhideTasksByCondition(condition){
+  async unhideWorkTimesByCondition(condition){
     const update = { isHidden: false };
     const options = { multi: true };
-    await Task.updateTasksByCondition(condition, update, options);
+    await WorkTime.updateWorkTimesByCondition(condition, update, options);
   },
 
   /**
-   * ----{批量删除}----
+   * ----{hide worktimes bulk}----
+   * @param {Object} condition condition
+   * @param {Object} update update
+   * @param {Object} options options
+   * @returns {Promise} Promise
+   */
+  async hideWorkTimesByCondition(condition){
+    const update = { isHidden: true };
+    const options = { multi: true };
+    await WorkTime.updateWorkTimesByCondition(condition, update, options);
+  },
+
+  /**
+   * ----{update worktimes by condition}----
+   * @param {Object} condition condition
+   * @param {Object} update update
+   * @returns {Promise} Promise
+   */
+  async updateWorkTimesByCondition(condition, update) {
+    const options = { multi: true };
+    await WorkTime.updateWorkTimesByCondition(condition, update, options);
+  },
+
+  /**
+   * ----{delete worktimes by condition}----
    * @param {Object} condition condition
    * @returns {Promise} Promise
    */
   async removeByCondition(condition){
-    await Task.removeByCondition(condition);
+    await WorkTime.removeyCondition(condition);
   },
 }

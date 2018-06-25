@@ -394,5 +394,21 @@ export default {
     const url = `${config.account_api}/api/tasks?_ancestorId=${ancestorId}`;
     const result = await request.axios_get(url, token);
     return result.data ? result.data : null;
-  }
+  },
+
+  /**
+   * 根据id获取组织
+   * @param {*} id id
+   * @param {*} token token
+   * @returns {Promise} promise
+   */
+  async getOrganizationById(id, token) {
+    if (!token) {
+      token = await this.access_token(config.account.email,
+        config.account.pwd);
+    }
+    const url = `${config.account_api}/api/organizations/${id}`;
+    const result = await request.axios_get(url, token);
+    return result.data ? result.data : null;
+  },
 };

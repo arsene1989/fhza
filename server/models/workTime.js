@@ -1,17 +1,21 @@
 import mongoose from 'mongoose';
-// 任务
+// 任务工时
 const Schema = mongoose.Schema;
 const scheme = new Schema({
   // 任务名称
   name: { type: String },
-  // 父任务
-  parent: { type: String, default: null },
   // 是否显示
   isHidden: { type: Boolean, default: false },
   // 是否归档
   isArchived: { type: Boolean, default: false },
+  // 部门组织
+  organizationId: { type: String, index: true },
+  // 部门组织
+  organizationName: { type: String, index: true },
   // 项目Id
   projectId: { type: String, index: true },
+  // 项目名称
+  projectName: { type: String, index: true },
   // 任务ID
   taskId: { type: String, index: true },
   // 层级
@@ -22,8 +26,12 @@ const scheme = new Schema({
   endDate: { type: Date },
   // 工时统计
   workTime: { type: Number },
-  // 
-  executorId: { type: Schema.Types.ObjectId },
+  // 执行者Id
+  executorId: { type: String, index: true },
+  // 执行者姓名
+  executorName: { type: String, index: true },
+  // 状态 0 未开始 1 进行中 2 已暂停 3 已结束
+  status: { type: Number },
 });
 
 export default mongoose.model('workTime', scheme);
