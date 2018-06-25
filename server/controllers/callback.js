@@ -56,7 +56,10 @@ export default {
         level: data.task.ancestorIds.length ?
           data.task.ancestorIds.length + 1 : 1,
         startDate: null,
-        endDate: null,
+        dueDate: null,
+        duration: 0,
+        tempStartDate: null,
+        tempDueDate: null,
         executorId: data.task.executor._id,
         executorName: data.task.executor.name,
         status: 0
@@ -88,7 +91,11 @@ export default {
         level: data.task.ancestorIds.length ?
           data.task.ancestorIds.length + 1 : 1,
         startDate: null,
-        endDate: null,
+        dueDate: null,
+        duration: 0,
+        tempStartDate: null,
+        tempDueDate: null,
+        workTime:0,
         executorId: data.task.executor._id,
         executorName: data.task.executor.name,
         status: 0
@@ -108,12 +115,26 @@ export default {
       await WorkTime.updateWorkTime(workTime._id, update);
     }
       break;
-    case "task.update.startDate":
-      console.log('不支持 task.update.startDate');
-      return res.json({ code: 200, msg: '不支持 task.update.startDate' });
-    case "task.update.dueDate":
-      console.log('不支持 task.update.dueDate');
-      return res.json({ code: 200, msg: '不支持 task.update.dueDate' });
+    // 任务开始时间
+    case "task.update.startDate":{
+      let condition = { taskId: data.task._id };
+      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
+      let date = new Date(data.task.startDate);
+      console.log('date', date);
+      let update = { startDate: date };
+      await WorkTime.updateWorkTime(workTime._id, update);
+    }
+      break;
+    // 任务开始时间
+    case "task.update.dueDate":{
+      let condition = { taskId: data.task._id };
+      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
+      let date = new Date(data.task.dueDate);
+      console.log('date', date);
+      let update = { dueDate: date };
+      await WorkTime.updateWorkTime(workTime._id, update);
+    }
+      break;
     case "task.update.priority": 
       console.log('不支持 task.update.priority');
       return res.json({ code: 200, msg: '不支持 task.update.priority' });

@@ -150,4 +150,46 @@ export default {
   async removeByCondition(condition){
     await WorkTime.removeyCondition(condition);
   },
+
+  async startTimingById(id) {
+    const update = {
+      tempStartDate: new Date(),
+      status: 1
+    }
+    await WorkTime.updateWorkTime(id, update);
+  },
+
+  async pauseTiming(workTime) {
+    const date = new Date();
+    const add = (date.valueOf() - workTime.tempStartDate.valueOf())/1000
+    const duration = workTime.duration + add;
+    const update = {
+      tempStartDate: date,
+      duration: duration,
+      status: 2
+    }
+    await WorkTime.updateWorkTime(workTime._id, update);
+  },
+
+  async continueTiming(workTime) {
+    const date = new Date();
+    const update = {
+      tempStartDate: date,
+      duration: duration,
+      status: 1
+    }
+    await WorkTime.updateWorkTime(workTime._id, update);
+  },
+
+  async completeTiming(workTime) {
+    const date = new Date();
+    const add = (date.valueOf() - workTime.tempStartDate.valueOf())/1000
+    const duration = workTime.duration + add;
+    const update = {
+      tempStartDate: date,
+      duration: duration,
+      status: 3
+    }
+    await WorkTime.updateWorkTime(workTime._id, update);
+  },
 }
