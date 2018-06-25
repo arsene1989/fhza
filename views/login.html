@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div>hello, world! </div>
+  <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+
+<script>
+
+   let code =  window.location.search.split('=')[1];
+   let herf = `http://salesdemo.teambition.net/oauth2/authorize?client_id=42096170-f743-11e7-b297-3d5e40c4d20d&redirect_uri=http://localhost:8000/login`;
+  //  axios.defaults.withCredentials = true;
+   if (!code) {
+     window.location.href = herf;
+   } else {
+    axios({
+     methods:'get',
+     url: `/api/login/${code}`,
+     withCredentials: true
+    }).then(res => {
+      console.log('res', res.data);
+    }).catch(error => {
+      alert(error);
+    })
+   }
+</script>
+</body>
+</html>
