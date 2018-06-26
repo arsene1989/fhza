@@ -1,11 +1,11 @@
 
-import WorkTime from '../services/workTime';
+import TimingTask from '../services/timingTask';
 
 export default {
   /*
    * 根据项目Id获取所有任务工时
    */
-  async workTimesByProjectId(req, res, next) {
+  async timingTasksByProjectId(req, res, next) {
     const id = req.params.id;
     const { pageSize, current } = req.query;
     console.log('pageSize and current', pageSize, current);
@@ -13,15 +13,15 @@ export default {
       return res.json({ status: 400, msg: 'id不存在' });
     }
     const condition = { projectId: id, isHidden: false, isArchived: false };
-    const workTimes = await WorkTime.
-      findWorkTimesByCondition(condition, pageSize, current);
-    res.json({ status:200, data: workTimes });
+    const timingTasks = await TimingTask.
+      findTimingTasksByCondition(condition, pageSize, current);
+    res.json({ status:200, data: timingTasks });
   },
 
   /*
    * 根据项目Id获取所有任务
    */
-  async workTimesByExecutorId(req, res, next) {
+  async timingTasksByExecutorId(req, res, next) {
     const id = req.params.id;
     const { pageSize, current } = req.query;
     console.log('pageSize and current', pageSize, current);
@@ -29,15 +29,15 @@ export default {
       return res.json({ status: 400, msg: 'id不存在' });
     }
     const condition = { executorId: id, isHidden: false, isArchived: false };
-    const workTimes = await WorkTime.
-      findWorkTimesByCondition(condition, pageSize, current);
-    res.json({ status:200, data: workTimes });
+    const timingTasks = await TimingTask.
+      findTimingTasksByCondition(condition, pageSize, current);
+    res.json({ status:200, data: timingTasks });
   },
 
   /*
    * 根据项目Id获取所有任务
    */
-  async workTimesByOrganizationId(req, res, next) {
+  async timingTasksByOrganizationId(req, res, next) {
     const id = req.params.id;
     const { pageSize, current } = req.query;
     console.log('pageSize and current', pageSize, current);
@@ -46,9 +46,9 @@ export default {
     }
     const condition = { organizationId: id, 
       isHidden: false, isArchived: false };
-    const workTimes = await WorkTime.
-      findWorkTimesByCondition(condition, pageSize, current);
-    res.json({ status:200, data: workTimes });
+    const timingTasks = await TimingTask.
+      findTimingTasksByCondition(condition, pageSize, current);
+    res.json({ status:200, data: timingTasks });
   },
 
 
@@ -67,20 +67,21 @@ export default {
     }
     
     try {
-      const task = await WorkTime.findWorkTimeById(id);
+      const task = await TimingTask.findTimingTaskById(id);
       if(!task){
         return res.json({ status: 400, msg: '找不到任务' });
       } 
       // 停止正在进行的计时
       const condition = { executorId: task.executorId, isHidden: false, 
         isArchived: false, status: 1 };
-      const workTime = await WorkTime.
-        findOneWorkTimeByCondition(condition);
-      console.log('workTime', workTime);
-      if(workTime){
-        await WorkTime.pauseTiming(workTime);
+      const timingTask = await TimingTask.
+        findOneTimingTaskByCondition(condition);
+      console.log('timingTask', timingTask);
+      if(timingTask){
+        await TimingTask.pauseTiming(timingTask);
       }
-      await WorkTime.startTimingById(id);
+      await TimingTask.startTimingById(id);
+      res.json({ status: 200, msg: '任务开始计时' });
     } catch (error) {
       next(error);
     }
@@ -96,12 +97,13 @@ export default {
       return res.json({ status: 400, msg: 'id不能为空' });
     }
     try {
-      const task = await WorkTime.findWorkTimeById(id);
+      const task = await TimingTask.findTimingTaskById(id);
       if(!task){
         return res.json({ status: 400, msg: '找不到任务' });
       } 
       // 停止正在进行的计时
-      await WorkTime.pauseTiming(workTime);
+      await TimingTask.pauseTiming(task);
+      res.json({ status: 200, msg: '任务暂停计时' });
     } catch (error) {
       next(error);
     }
@@ -117,20 +119,21 @@ export default {
     }
     
     try {
-      const task = await WorkTime.findWorkTimeById(id);
+      const task = await TimingTask.findTimingTaskById(id);
       if(!task){
         return res.json({ status: 400, msg: '找不到任务' });
       } 
       // 停止正在进行的计时
       const condition = { executorId: task.executorId, isHidden: false, 
         isArchived: false, status: 1 };
-      const workTime = await WorkTime.
-        findOneWorkTimeByCondition(condition);
-      console.log('workTime', workTime);
-      if(workTime){
-        await WorkTime.pauseTiming(workTime);
+      const timingTask = await TimingTask.
+        findOneTimingTaskByCondition(condition);
+      console.log('timingTask', timingTask);
+      if(timingTask){
+        await TimingTask.pauseTiming(timingTask);
       }
-      await WorkTime.continueTiming(task);
+      await TimingTask.continueTiming(task);
+      res.json({ status: 200, msg: '任务继续计时' });
     } catch (error) {
       next(error);
     }
@@ -145,12 +148,13 @@ export default {
       return res.json({ status: 400, msg: 'id不存在' });
     }
     try {
-      const task = await WorkTime.findWorkTimeById(id);
+      const task = await TimingTask.findTimingTaskById(id);
       if(!task){
         return res.json({ status: 400, msg: '找不到任务' });
       } 
       
-      await WorkTime.completeTiming(task);
+      await TimingTask.completeTiming(task);
+      res.json({ status: 200, msg: '任务完成计时' });
     } catch (error) {
       next(error);
     }

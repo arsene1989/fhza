@@ -2,7 +2,6 @@ import teambition from '../common/teambition';
 import config from 'config';
 import { eventsForOrganization,
   callbackUrlOrganization } from '../common/constants';
-// import projectUtils from '../utils/projectUtils';
 
 export default {
 

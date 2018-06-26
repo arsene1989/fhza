@@ -3,7 +3,7 @@ import config from 'config';
 import { eventsForProject } from '../common/constants';
 // import taskUtils from '../utils/taskUtils';
 // import projectUtils from '../utils/projectUtils';
-import WorkTime from '../services/workTime';
+import TimingTask from '../services/timingTask';
 
 export default {
 
@@ -25,7 +25,7 @@ export default {
       let projectName = data.project.name;
       let condition = { projectId: projectId };
       let update = { projectName: projectName }
-      await WorkTime.updateWorkTimesByCondition(condition, update);
+      await TimingTask.updateTimingTaskesByCondition(condition, update);
     }
       break;
     // 创建任务
@@ -44,7 +44,7 @@ export default {
       let organizationId = data.project._organizationId;
       let organization = await teambition.
         getOrganizationById(organizationId, token)
-      let workTime = {
+      let timingTask = {
         name: data.task.content,
         isHidden: false,
         isArchived: false,
@@ -64,7 +64,7 @@ export default {
         executorName: data.task.executor.name,
         status: 0
       }
-      await WorkTime.insertWorkTime(workTime);
+      await TimingTask.insertTimingTask(timingTask);
     }
       break;
     case "task.update":
@@ -79,7 +79,7 @@ export default {
       let organizationId = data.project._organizationId;
       let organization = await teambition.
         getOrganizationById(organizationId, token)
-      let workTime = {
+      let timingTask = {
         name: data.task.content,
         isHidden: false,
         isArchived: false,
@@ -95,12 +95,11 @@ export default {
         duration: 0,
         tempStartDate: null,
         tempDueDate: null,
-        workTime:0,
         executorId: data.task.executor._id,
         executorName: data.task.executor.name,
         status: 0
       }
-      await WorkTime.insertWorkTime(workTime);
+      await TimingTask.insertTimingTask(timingTask);
 
       // let subTasks = await teambition.getTasksByAncestorId(data.task._id);
       // console.log('subTasks', subTasks);
@@ -109,30 +108,30 @@ export default {
     // 任务执行者变更
     case "task.update.executor":{
       let condition = { taskId: data.task._id };
-      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
+      let timingTask = await TimingTask.findOneTimingTaskByCondition(condition);
       let update = { executorId: data.task.executor._id, 
         executorName: data.task.executor.name };
-      await WorkTime.updateWorkTime(workTime._id, update);
+      await TimingTask.updateTimingTask(timingTask._id, update);
     }
       break;
     // 任务开始时间
     case "task.update.startDate":{
       let condition = { taskId: data.task._id };
-      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
+      let timingTask = await TimingTask.findOneTimingTaskByCondition(condition);
       let date = new Date(data.task.startDate);
       console.log('date', date);
       let update = { startDate: date };
-      await WorkTime.updateWorkTime(workTime._id, update);
+      await TimingTask.updateTimingTask(timingTask._id, update);
     }
       break;
     // 任务开始时间
     case "task.update.dueDate":{
       let condition = { taskId: data.task._id };
-      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
+      let timingTask = await TimingTask.findOneTimingTaskByCondition(condition);
       let date = new Date(data.task.dueDate);
       console.log('date', date);
       let update = { dueDate: date };
-      await WorkTime.updateWorkTime(workTime._id, update);
+      await TimingTask.updateTimingTask(timingTask._id, update);
     }
       break;
     case "task.update.priority": 
@@ -166,9 +165,9 @@ export default {
     // 任务重命名，节点名字修改
     case "task.rename": {
       let condition = { taskId: data.task._id };
-      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
+      let timingTask = await TimingTask.findOneTimingTaskByCondition(condition);
       let update = { name: data.task.content };
-      await WorkTime.updateWorkTime(workTime._id, update);
+      await TimingTask.updateTimingTask(timingTask._id, update);
     }
       break;
     // 移动项目
@@ -181,14 +180,12 @@ export default {
         // 任务修改父节点,
         let condition = { taskId: data.task._id };
         console.log('condition', condition);
-        let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
-        console.log('workTime', workTime);
+        let timingTask = await TimingTask.
+          findOneTimingTaskByCondition(condition);
+        console.log('timingTask', timingTask);
         let update = { projectId: data.project._id, 
           projectName: data.project.name };
-        await WorkTime.updateWorkTime(workTime._id, update);
-        // 所有子任务projectId修改
-        // await taskUtils.setSubTaskProjectIdByTaskId(data.task._id,
-        //   data.project._id);
+        await TimingTask.updateTimingTask(timingTask._id, update);
       }
     }
       break;
@@ -199,15 +196,15 @@ export default {
     // 任务归档
     case "task.archive": {
       let condition = { taskId: data.task._id };
-      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
-      await WorkTime.archiveWorkTimeById(workTime._id);
+      let timingTask = await TimingTask.findOneTimingTaskByCondition(condition);
+      await TimingTask.archiveTimingTaskById(timingTask._id);
     }
       break;
     // 任务解档
     case "task.unarchive": {
       let condition = { taskId: data.task._id };
-      let workTime = await WorkTime.findOneWorkTimeByCondition(condition);
-      await WorkTime.unarchiveWorkTimeById(workTime._id);
+      let timingTask = await TimingTask.findOneTimingTaskByCondition(condition);
+      await TimingTask.unarchiveTimingTaskById(timingTask._id);
     }
       break;
     case "task.bulk.update.executor":
@@ -286,14 +283,14 @@ export default {
     case "project.remove":{
       let projectId = data.project._id;
       let condition = { projectId: projectId };
-      await WorkTime.removeByCondition(condition);
+      await TimingTask.removeByCondition(condition);
     }
       break;
     // 项目归档，项目内所有的任务不可见
     case "project.archive":{
       let projectId = data.project._id;
       let condition = { projectId: projectId };
-      await WorkTime.hideWorkTimesByCondition(condition);
+      await TimingTask.hideTimingTasksByCondition(condition);
     }
       break;
     // 项目解档，项目内所有的任务设置为可见, 需要验证是否添加hook
@@ -302,7 +299,7 @@ export default {
       // let project = await teambition.getPorjectInfoById(projectId, token);
       // await projectUtils.initProjectData(project);
       let condition = { projectId: projectId };
-      await WorkTime.unhideWorkTimesByCondition(condition);
+      await TimingTask.unhideTimingTasksByCondition(condition);
     }
       break;
     default:

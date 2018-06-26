@@ -1,7 +1,6 @@
 import request from './async';
 import jsdom from 'jsdom';
 import config from 'config';
-import { TaskNode } from '../models/taskNode';
 
 export default {
   async access_token(email, pwd) {
@@ -34,37 +33,6 @@ export default {
     const result = await request.
       axios_get(`${config.account_api}/api/projects/${id}/tasks`, token);
     return result.data ? result.data : null;
-  },
-  /**
-   * 获取项目信息
-   * @param {*} id id
-   * @param {*} token token
-   * @returns {Promise} promise
-   */
-  async getPorjectInfoById(id, token) {
-    if (!token) {
-      token = await this.access_token(config.account.email,
-        config.account.pwd);
-    }
-    const result = await request.
-      axios_get(`${config.account_api}/api/projects/${id}`, token);
-    return result.data ? result.data : null;
-  },
-  /**
-   * 获取根节点
-   * @param {*} id id
-   * @param {*} token token
-   * @returns {Promise} promise
-   */
-  async getRootNode(id, token) {
-    if (!token) {
-      token = await this.access_token(config.account.email,
-        config.account.pwd);
-    }
-    const result = await request.
-      axios_get(`${config.account_api}/api/projects/${id}`, token);
-    return result.data ? new TaskNode(result.data._id,
-      result.data.name, 0, null) : null;
   },
   /**
    * 获取项目hooks

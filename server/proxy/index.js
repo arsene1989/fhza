@@ -1,8 +1,6 @@
 
-import Task from './task';
-import WorkTime from './workTime';
+import TimingTask from './timingTask';
 
 export {
-  Task,
-  WorkTime
+  TimingTask
 };

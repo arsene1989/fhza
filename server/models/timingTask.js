@@ -42,4 +42,4 @@ const scheme = new Schema({
   // records: [{ startDate: Date, : Date, duration: Number }]
 });
 
-export default mongoose.model('workTime', scheme);
+export default mongoose.model('timingTask', scheme);
