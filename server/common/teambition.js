@@ -21,8 +21,8 @@ export default {
   },
   /**
    * 获取项目下所有任务
-   * @param {*} id id
-   * @param {*} token token
+   * @param {String} id id
+   * @param {String} token token
    * @returns {Promise} promise
    */
   async getAllTasksByProjectId(id, token) {
@@ -34,6 +34,23 @@ export default {
       axios_get(`${config.account_api}/api/projects/${id}/tasks`, token);
     return result.data ? result.data : null;
   },
+
+  /**
+   * 获取项目信息
+   * @param {*} id id
+   * @param {*} token token
+   * @returns {Promise} promise
+   */
+  async getPorjectInfoById(id, token) {
+    if (!token) {
+      token = await this.access_token(config.account.email,
+        config.account.pwd);
+    }
+    const result = await request.
+      axios_get(`${config.account_api}/api/projects/${id}`, token);
+    return result.data ? result.data : null;
+  },
+  
   /**
    * 获取项目hooks
    * @param {*} id id

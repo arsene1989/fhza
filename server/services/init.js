@@ -2,6 +2,7 @@ import teambition from '../common/teambition';
 import config from 'config';
 import { eventsForOrganization,
   callbackUrlOrganization } from '../common/constants';
+import projectUtils from '../utils/projectUtils';
 
 export default {
 
@@ -22,20 +23,20 @@ export default {
         contains = true;
       }
     }
-    console.log('contains', contains);
+    
     if(!contains){
       await teambition.createOrganizationHook(organizationId,
         callbackUrlOrganization, eventsForOrganization, token);
     }
 
     // 没有归档的企业项目
-    // const projects = await teambition.
-    //   getAllProjectsByOrganizationId(organizationId, token);
-    // console.log('projects', projects);
+    const projects = await teambition.
+      getAllProjectsByOrganizationId(organizationId, token);
+    console.log('projects', projects);
 
-    // for(let project of projects){
-    //   await projectUtils.initProjectData(project);
-    // }
+    for(let project of projects){
+      await projectUtils.initProjectData(project);
+    }
   },
 
 }

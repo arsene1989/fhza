@@ -1,8 +1,7 @@
 import teambition from '../common/teambition';
 import config from 'config';
 import { eventsForProject } from '../common/constants';
-// import taskUtils from '../utils/taskUtils';
-// import projectUtils from '../utils/projectUtils';
+import projectUtils from '../utils/projectUtils';
 import TimingTask from '../services/timingTask';
 
 export default {
@@ -30,17 +29,6 @@ export default {
       break;
     // 创建任务
     case "task.create":{
-      // let parent;
-      // if(!data.task.ancestorIds.length) {
-      //   let condition = { taskId: data.project._id };
-      //   console.log('condition', condition);
-      //   parent = await Task.findOneTaskByCondition(condition);
-      // } else {
-      //   let condition = { taskId: data.task.ancestorIds[0] };
-      //   console.log('condition', condition);
-      //   parent = await Task.findOneTaskByCondition(condition);
-      // }
-      // console.log('parent', parent);
       let organizationId = data.project._organizationId;
       let organization = await teambition.
         getOrganizationById(organizationId, token)
@@ -53,6 +41,7 @@ export default {
         projectId: data.project._id,
         projectName: data.project.name,
         taskId: data.task._id,
+        type: null,
         level: data.task.ancestorIds.length ?
           data.task.ancestorIds.length + 1 : 1,
         startDate: null,
@@ -91,6 +80,7 @@ export default {
         level: data.task.ancestorIds.length ?
           data.task.ancestorIds.length + 1 : 1,
         startDate: null,
+        type: null,
         dueDate: null,
         duration: 0,
         tempStartDate: null,
@@ -100,12 +90,9 @@ export default {
         status: 0
       }
       await TimingTask.insertTimingTask(timingTask);
-
-      // let subTasks = await teambition.getTasksByAncestorId(data.task._id);
-      // console.log('subTasks', subTasks);
     }
       break;
-    // 任务执行者变更
+    // 任务执行者变更,新建一个计时任务，原来的任务暂停
     case "task.update.executor":{
       let condition = { taskId: data.task._id };
       let timingTask = await TimingTask.findOneTimingTaskByCondition(condition);
@@ -296,8 +283,8 @@ export default {
     // 项目解档，项目内所有的任务设置为可见, 需要验证是否添加hook
     case "project.unarchive":{
       let projectId = data.project._id;
-      // let project = await teambition.getPorjectInfoById(projectId, token);
-      // await projectUtils.initProjectData(project);
+      let project = await teambition.getPorjectInfoById(projectId, token);
+      await projectUtils.initProjectData(project);
       let condition = { projectId: projectId };
       await TimingTask.unhideTimingTasksByCondition(condition);
     }
