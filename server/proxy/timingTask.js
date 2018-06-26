@@ -20,7 +20,7 @@ export default {
     const skip = (current-1) * pageSize;
     return await TimingTask.find(condition)
       .skip(Number(skip))
-      .sort({ status: 1, updatedAt: -1 })
+      .sort({ dueDate: -1 })
       .limit(Number(pageSize))
       .exec();
   },

@@ -1,4 +1,3 @@
-
 import TimingTask from '../services/timingTask';
 
 export default {
@@ -80,7 +79,7 @@ export default {
       if(timingTask){
         await TimingTask.pauseTiming(timingTask);
       }
-      await TimingTask.startTimingById(id);
+      await TimingTask.startTimingById(id, type);
       res.json({ status: 200, msg: '任务开始计时' });
     } catch (error) {
       next(error);

@@ -151,20 +151,18 @@ export default {
     await TimingTask.removeByCondition(condition);
   },
 
-  async startTimingById(id) {
+  async startTimingById(id, type) {
     const update = {
       tempStartDate: new Date(),
-      status: 1
+      status: 1,
+      type: type
     }
     await TimingTask.updateTimingTask(id, update);
   },
 
   async pauseTiming(timingTask) {
     const date = new Date();
-    console.log('date', date, date.valueOf());
-    console.log('tempStartDate', timingTask.tempStartDate, 
-      timingTask.tempStartDate.valueOf());
-    const plus = (date.valueOf() - timingTask.tempStartDate.valueOf())/1000
+    const plus = (date.valueOf() - timingTask.tempStartDate.valueOf())/1000;
     const duration = timingTask.duration + plus;
     const update = {
       tempDueDate: date,
@@ -185,16 +183,16 @@ export default {
 
   async completeTiming(timingTask) {
     const date = new Date();
-    console.log('date', date, date.valueOf());
-    console.log('tempStartDate', timingTask.tempStartDate, 
-      timingTask.tempStartDate.valueOf());
-    const plus = (date.valueOf() - timingTask.tempStartDate.valueOf())/1000
-    const duration = timingTask.duration + plus;
-    const update = {
-      tempDueDate: date,
-      duration: duration,
+    let update = {
+      tempDueDate: date, 
       status: 3
     }
+    if(timingTask.status === 1) {
+      const plus = (date.valueOf() - timingTask.tempStartDate.valueOf())/1000;
+      const duration = timingTask.duration + plus;
+      update.duration = duration;
+    }
+    console.log('update', update);
     await TimingTask.updateTimingTask(timingTask._id, update);
   },
 }
